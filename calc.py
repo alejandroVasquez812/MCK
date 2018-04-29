@@ -11,23 +11,63 @@ sys.path.insert(0, "../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-tokens = (
-    'NAME', 'NUMBER',
-)
 
-literals = ['=', '+', '-', '*', '/', '(', ')']
+literals = ['=', '+', '-', '*', '/', '(', ')', '^']
+
+#TODO Intergral derivate limit
+reserved = {
+    'integral': 'INTEGRAL',
+    'from': 'FROM',
+    'to': 'TO',
+    'derivation': 'DERIVATIVE',
+    'limit': 'LIMIT',
+    'when': 'WHEN',
+    'of': 'OF',
+    'oo': 'INFINITY',
+    'sum': 'SUM',
+    'product': 'PRODUCT',
+    'sin': 'SIN',
+    'cos': 'COS',
+    'tan': 'TAN',
+    'varlist' : 'PRINTLIST',
+}
 
 # Tokens
+tokens = [
+    'VAR',
+    'FLOAT',
+    'INT',
+    'POWER',
+    'X',
+    'GOES',
+    ] + list(reserved.values())
 
-t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
 
+t_POWER = r'\^'
+t_GOES = r'\->'
+t_X = r'[x]'
 
-def t_NUMBER(t):
-    r'\d+'
-    t.value = int(t.value)
+def t_VAR(t):
+    r'[a-wyzA-WYZ][a-zA-Z0-9_]*'
+    t.type = reserved.get(t.value, 'VAR')    # Check for reserved words
     return t
 
-t_ignore = " \t"
+
+# Set floating point structure
+#   number '.' number                   -> example. 12.34
+#   number '.' number 'e' '+/-' number  -> example. 12.34e+56 or 12.34E-56
+#   number 'e' '+/-' number             -> example. 12E+34 or 12e-34
+def t_FLOAT(t):
+    r'([0-9]+)?([.][0-9]+)([eE][+-]?[0-9]+)?'
+    t.value = float(t.value)
+    return t
+
+
+# Set integer structure
+def t_INT(t):
+    r'[0-9]+'
+    t.value = int(t.value)
+    return t
 
 
 def t_newline(t):
@@ -35,9 +75,19 @@ def t_newline(t):
     t.lexer.lineno += t.value.count("\n")
 
 
+def t_COMMENT(t):
+    r'\#.*'
+    pass
+    # No return value. Token discarded
+
+
 def t_error(t):
-    print("Illegal character '%s'" % t.value[0])
+    print ("ERROR: Line %d: LEXER: Illegal character '%s' " % (t.lexer.lineno, t.value[0]))
     t.lexer.skip(1)
+
+
+t_ignore = " \t"
+
 
 # Build the lexer
 import ply.lex as lex
@@ -48,6 +98,7 @@ lex.lex()
 precedence = (
     ('left', '+', '-'),
     ('left', '*', '/'),
+    ('left', 'POWER'),
     ('right', 'UMINUS'),
 )
 
@@ -56,7 +107,7 @@ names = {}
 
 
 def p_statement_assign(p):
-    'statement : NAME "=" expression'
+    'statement : VAR "=" expression'
     names[p[1]] = p[3]
 
 
@@ -69,7 +120,8 @@ def p_expression_binop(p):
     '''expression : expression '+' expression
                   | expression '-' expression
                   | expression '*' expression
-                  | expression '/' expression'''
+                  | expression '/' expression
+                  | expression POWER expression'''
     if p[2] == '+':
         p[0] = p[1] + p[3]
     elif p[2] == '-':
@@ -78,6 +130,9 @@ def p_expression_binop(p):
         p[0] = p[1] * p[3]
     elif p[2] == '/':
         p[0] = p[1] / p[3]
+    elif p[2] == '^':
+        p[0] = p[1] / p[3]
+
 
 
 def p_expression_uminus(p):
@@ -91,12 +146,12 @@ def p_expression_group(p):
 
 
 def p_expression_number(p):
-    "expression : NUMBER"
+    "expression : INT"
     p[0] = p[1]
 
 
 def p_expression_name(p):
-    "expression : NAME"
+    "expression : VAR"
     try:
         p[0] = names[p[1]]
     except LookupError:
@@ -104,11 +159,32 @@ def p_expression_name(p):
         p[0] = 0
 
 
+def p_equation_x(p):
+    'expression : X'
+    p[0] = str(p[1])
+
+
+def p_expression_trigonometry(p):
+    '''expression : SIN '(' expression ')'
+                | COS '(' expression ')'
+                | TAN '(' expression ')' '''
+    p[0] = str(p[1]) + str(p[2]) + str(p[3]) + str(p[4])
+    print("Trigo")
+
+def p_expression_sum(p):
+    '''expression : SUM FROM expression TO expression OF expression'''
+    lower = p[3]
+    high = p[5]
+    eq = str(p[7])
+    print("Sumatoria")
+
+
 def p_error(p):
     if p:
         print("Syntax error at '%s'" % p.value)
     else:
         print("Syntax error at EOF")
+
 
 import ply.yacc as yacc
 yacc.yacc()
