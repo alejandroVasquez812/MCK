@@ -6,13 +6,17 @@
 # -----------------------------------------------------------------------------
 
 import sys
+import math
+import ply.yacc as yacc
+import ply.lex as lex
 sys.path.insert(0, "../..")
+import matrix
 
 if sys.version_info[0] >= 3:
     raw_input = input
 
 
-literals = ['=', '+', '-', '*', '/', '(', ')', '^']
+literals = ['=', '+', '-', '*', '/', '(', ')', '^',',','[',']']
 
 #TODO Intergral derivate limit
 reserved = {
@@ -90,7 +94,7 @@ t_ignore = " \t"
 
 
 # Build the lexer
-import ply.lex as lex
+
 lex.lex()
 
 # Parsing rules
@@ -169,7 +173,45 @@ def p_expression_trigonometry(p):
                 | COS '(' expression ')'
                 | TAN '(' expression ')' '''
     p[0] = str(p[1]) + str(p[2]) + str(p[3]) + str(p[4])
-    print("Trigo")
+    if p[1] == 'sin':
+       print("Trigo: ",math.sin(p[3]))
+    if p[1] == 'cos':
+       print("Trigo:" ,math.cos(p[3]))
+    if p[1] == 'tan':
+       print("Trigo:",math.tan(p[3]))
+
+def p_Celsius_Fahrenheit_Float(p):	
+	'''	expression : INT VAR
+		           | FLOAT VAR 
+	'''
+	if p[2] == 'F':
+	     temp =( (p[1] -32) / 9.0 *5.0)
+	     print("%s Celsius", temp)
+	
+	elif p[2] == 'C':
+             temp = ( 9.0  / 5.0 *  p[1] + 32) 
+	     #print(temp)
+# matrix 2x 2
+def p_matrix_List(p):
+	#creando la lista 
+    '''  expression : '[' INT ']' ',' '[' INT ']'
+    '''
+    print(p[2])
+    print(p[6])
+    sampleList = []
+    sampleList2= []
+    for digit_str in str(p[2]):
+     for digit in digit_str:
+      sampleList.append(digit)
+    print(sampleList)
+#la otra
+    for digit_st in str(p[6]):
+     for digits in digit_st:
+      sampleList2.append(digits)
+    print(sampleList2)
+    matrix1= matrix.Matrix([int(sampleList[0]),int(sampleList[1])],[int(sampleList2[0]),int(sampleList2[1])])
+    print( matrix1.det)
+
 
 def p_expression_sum(p):
     '''expression : SUM FROM expression TO expression OF expression'''
@@ -186,7 +228,7 @@ def p_error(p):
         print("Syntax error at EOF")
 
 
-import ply.yacc as yacc
+
 yacc.yacc()
 
 while 1:
