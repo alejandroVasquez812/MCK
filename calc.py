@@ -18,7 +18,6 @@ if sys.version_info[0] >= 3:
 
 literals = ['=', '+', '-', '*', '/', '(', ')', '^',',','[',']']
 
-#TODO Intergral derivate limit
 reserved = {
     'integral': 'INTEGRAL',
     'from': 'FROM',
@@ -163,8 +162,35 @@ def p_expression_name(p):
         p[0] = 0
 
 
-def p_equation_x(p):
-    'expression : X'
+def p_result_derivative(p):
+    '''expression : DERIVATIVE OF expression'''
+    eq = str(p[3])
+
+def p_result_limit(p):
+    '''result : LIMIT WHEN X GOES expression OF expression
+              | LIMIT WHEN X GOES INFINITY OF expression'''
+
+    limitOf = str(p[3])
+    tendsTo = str(p[5])
+    eq1 = str(p[7])
+
+
+def p_result_integral(p):
+    '''expression : INTEGRAL OF expression'''
+    eq = str(p[3])
+    print("Integral of ", p[3])
+
+def p_result_definite_integral(p):
+    '''expression : INTEGRAL FROM expression TO expression OF expression
+              | INTEGRAL FROM expression TO INFINITY OF expression'''
+    lowerbound = str(p[3])
+    highbound = str(p[5])
+    eq1 = str(p[7])
+
+
+def p_expression_x(p):
+    '''expression : X
+                    | INT X'''
     p[0] = str(p[1])
 
 
