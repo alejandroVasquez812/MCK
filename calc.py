@@ -200,11 +200,11 @@ def p_expression_trigonometry(p):
                 | TAN '(' expression ')' '''
     p[0] = str(p[1]) + str(p[2]) + str(p[3]) + str(p[4])
     if p[1] == 'sin':
-       print("Trigo: ",math.sin(p[3]))
+       p[0]=("Answer: %s: "% math.sin(p[3]))
     if p[1] == 'cos':
-       print("Trigo:" ,math.cos(p[3]))
+       p[0] ("Answer: %s" % math.cos(p[3]))
     if p[1] == 'tan':
-       print("Trigo:",math.tan(p[3]))
+       p[0]=("Answer: %s" % math.tan(p[3]))
 
 def p_Celsius_Fahrenheit_Float(p):	
 	'''	expression : INT VAR
@@ -212,31 +212,31 @@ def p_Celsius_Fahrenheit_Float(p):
 	'''
 	if p[2] == 'F':
 	     temp =( (p[1] -32) / 9.0 *5.0)
-	     print("%s Celsius", temp)
-	
+	     p[0]=("%s Celsius", temp)
 	elif p[2] == 'C':
-             temp = ( 9.0  / 5.0 *  p[1] + 32) 
-	     #print(temp)
+	  temp = ( 9.0  / 5.0 *  p[1] + 32) 
+	  p[0]= ("%s Fahrenheit"% temp)
 # matrix 2x 2
 def p_matrix_List(p):
 	#creando la lista 
     '''  expression : '[' INT ']' ',' '[' INT ']'
     '''
-    print(p[2])
-    print(p[6])
+    #print(p[2])
+    #print(p[6])
     sampleList = []
     sampleList2= []
     for digit_str in str(p[2]):
      for digit in digit_str:
       sampleList.append(digit)
-    print(sampleList)
+    #print(sampleList)  esto es para verificar la lista esta correcta  NO ES NECESARIO
 #la otra
     for digit_st in str(p[6]):
      for digits in digit_st:
       sampleList2.append(digits)
-    print(sampleList2)
+    #print(sampleList2)  esto es para verificar la lista esta correcta  NO ES NECESARIO
     matrix1= matrix.Matrix([int(sampleList[0]),int(sampleList[1])],[int(sampleList2[0]),int(sampleList2[1])])
-    print( matrix1.det)
+    print(matrix1)
+    p[0]= (matrix1.det)
 
 
 def p_expression_sum(p):
