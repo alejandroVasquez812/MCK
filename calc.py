@@ -11,6 +11,7 @@ import ply.yacc as yacc
 import ply.lex as lex
 sys.path.insert(0, "../..")
 import matrix
+import latex2mathml.converter
 
 if sys.version_info[0] >= 3:
     raw_input = input
