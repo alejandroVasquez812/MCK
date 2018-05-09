@@ -36,6 +36,7 @@ reserved = {
     'sin': 'SIN',
     'cos': 'COS',
     'tan': 'TAN',
+    'solve': 'SOLVE',
     'varlist' : 'PRINTLIST',
 }
 
@@ -180,7 +181,21 @@ def p_expression_name(p):
         p[0] = 0
 
 
-def p_result_derivative(p):
+def p_expression_solve(p):
+    '''expression : SOLVE expression'''
+    if s.find('^') != -1:
+        eq = MathFunctions.formateq(p[2])
+    else:
+        eq = str(p[2])
+    if p[2] is not None:
+        eq = (str(MathFunctions.msolve(eq, MathFunctions.symbols('x'))))
+        eq = MathFunctions.reformateq(eq)
+        p[0] = eq
+    else:
+        pass
+
+
+def p_expression_derivative(p):
     '''expression : DERIVATIVE OF expression'''
     if s.find('^') != -1:
         eq = MathFunctions.formateq(p[3])
@@ -194,7 +209,7 @@ def p_result_derivative(p):
         pass
 
 
-def p_result_limit(p):
+def p_expression_limit(p):
     '''expression : LIMIT WHEN X GOES expression OF expression
               | LIMIT WHEN X GOES INFINITY OF expression'''
 
@@ -213,7 +228,7 @@ def p_result_limit(p):
     else:
         pass
 
-def p_result_integral(p):
+def p_expression_integral(p):
     '''expression : INTEGRAL OF expression'''
     if s.find('^') != -1:
         eq = MathFunctions.formateq(p[3])
@@ -227,7 +242,7 @@ def p_result_integral(p):
         pass
 
 
-def p_result_definite_integral(p):
+def p_expression_definite_integral(p):
     '''expression : INTEGRAL FROM expression TO expression OF expression
               | INTEGRAL FROM expression TO INFINITY OF expression'''
     lowerbound = str(p[3])
@@ -245,14 +260,41 @@ def p_result_definite_integral(p):
         pass
 
 
-def p_expression_x(p):
-    '''expression : X'''
+def p_eq_x(p):
+    '''equation : X'''
     p[0] = str(p[1])
 
 
-def p_mult_expression(p):
-    '''expression : INT X'''
+def p_expression_eq(p):
+    '''expression : equation'''
+    p[0] = str(p[1])
+
+
+def p_mult_equation(p):
+    '''equation : INT X'''
     p[0] = str(p[1]) + '*' + str(p[2])
+
+
+def p_more_equations(p):
+    '''equation : equation '+' equation
+                  | equation '-' equation
+                  | equation '*' equation
+                  | equation '/' equation
+                  | equation POWER equation
+                  | equation '+' expression
+                  | equation '-' expression
+                  | equation '*' expression
+                  | equation '/' expression
+                  | equation POWER expression
+                  | expression '+' equation
+                  | expression '-' equation
+                  | expression '*' equation
+                  | expression '/' equation
+                  | expression POWER equation'''
+    if p[1] is None or p[3] is None:
+        pass
+    else:
+        p[0] = str(p[1]) + str(p[2]) + str(p[3])
 
 
 def p_expression_trigonometry(p):

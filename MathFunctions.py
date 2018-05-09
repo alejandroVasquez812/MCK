@@ -38,6 +38,10 @@ def limits(eq, sym, sym0, side=None):
         return limit(eq, sym, sym0, side)
 
 
+def msolve(eq, sym):
+    return solve(eq, sym)
+
+
 # method to change equation format; Not working for some reason
 def formateq(eq):
     if isinstance(eq, str):
