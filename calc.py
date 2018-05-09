@@ -11,7 +11,8 @@ import ply.yacc as yacc
 import ply.lex as lex
 sys.path.insert(0, "../..")
 import matrix
-import latex2mathml.converter
+import asciimathml
+from xml.etree.ElementTree import tostring
 
 if sys.version_info[0] >= 3:
     raw_input = input
@@ -136,6 +137,20 @@ def p_expression_binop(p):
         p[0] = p[1] / p[3]
     elif p[2] == '^':
         p[0] = p[1] ** p[3]
+
+    if p[2] != '^':
+        y = tostring(asciimathml.parse(str(p[1])))
+        y = y + tostring(asciimathml.parse(str(p[2])))
+        y = y + tostring(asciimathml.parse(str(p[3])))
+
+        x = tostring(asciimathml.parse(str(p[0])))
+
+        print(str(y, "utf-8") + "=" + str(x, "utf-8"))
+    else:
+        y = tostring(asciimathml.parse(str(p[1]) + "^" + str(p[3])))
+        x = tostring(asciimathml.parse(str(p[0])))
+        print(str(y, "utf-8") + "=" + str(x, "utf-8"))
+
 
 
 
