@@ -9,10 +9,11 @@ import sys
 import math
 import ply.yacc as yacc
 import ply.lex as lex
-sys.path.insert(0, "../..")
 import matrix
 import asciimathml
 from xml.etree.ElementTree import tostring
+
+sys.path.insert(0, "../..")
 
 if sys.version_info[0] >= 3:
     raw_input = input
