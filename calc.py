@@ -11,6 +11,7 @@ import ply.yacc as yacc
 import ply.lex as lex
 import matrix
 import asciimathml
+import MathFunctions
 from xml.etree.ElementTree import tostring
 
 sys.path.insert(0, "../..")
@@ -136,8 +137,10 @@ def p_expression_binop(p):
         p[0] = p[1] * p[3]
     elif p[2] == '/':
         p[0] = p[1] / p[3]
-    elif p[2] == '^':
+    elif p[2] == '^' and p[1] != "x" and p[3] != "x":
         p[0] = p[1] ** p[3]
+    elif p[2] == '^' and p[1] == "x" or p[3] == "x":
+        p[0] = str(p[1]) + '^' + str(p[3])
 
     if p[2] != '^':
         y = tostring(asciimathml.parse(str(p[1])))
@@ -147,12 +150,10 @@ def p_expression_binop(p):
         x = tostring(asciimathml.parse(str(p[0])))
 
         print(str(y, "utf-8") + "=" + str(x, "utf-8"))
-    else:
+    elif p[1] != "x" and p[3] != "x":
         y = tostring(asciimathml.parse(str(p[1]) + "^" + str(p[3])))
         x = tostring(asciimathml.parse(str(p[0])))
         print(str(y, "utf-8") + "=" + str(x, "utf-8"))
-
-
 
 
 def p_expression_uminus(p):
@@ -181,21 +182,50 @@ def p_expression_name(p):
 
 def p_result_derivative(p):
     '''expression : DERIVATIVE OF expression'''
-    eq = str(p[3])
+    if s.find('^') != -1:
+        eq = MathFunctions.formateq(p[3])
+    else:
+        eq = str(p[3])
+    if p[3] is not None:
+        eq = (str(MathFunctions.derivative(eq, MathFunctions.symbols('x'))))
+        eq = MathFunctions.reformateq(eq)
+        p[0] = eq
+    else:
+        pass
+
 
 def p_result_limit(p):
-    '''result : LIMIT WHEN X GOES expression OF expression
+    '''expression : LIMIT WHEN X GOES expression OF expression
               | LIMIT WHEN X GOES INFINITY OF expression'''
 
     limitOf = str(p[3])
     tendsTo = str(p[5])
     eq1 = str(p[7])
 
+    if s.find('^') != -1:
+        eq = MathFunctions.formateq(eq1)
+    else:
+        eq = str(eq1)
+    if limitOf is not None and tendsTo is not None and p[7] is not None:
+        eq = (str(MathFunctions.limits(eq, MathFunctions.symbols('x'), tendsTo)))
+        eq = MathFunctions.reformateq(eq)
+        p[0] = eq
+    else:
+        pass
 
 def p_result_integral(p):
     '''expression : INTEGRAL OF expression'''
-    eq = str(p[3])
-    print("Integral of ", p[3])
+    if s.find('^') != -1:
+        eq = MathFunctions.formateq(p[3])
+    else:
+        eq = str(p[3])
+    if p[3] is not None:
+        eq = (str(MathFunctions.integration(eq, MathFunctions.symbols('x'))))
+        eq = MathFunctions.reformateq(eq)
+        p[0] = eq
+    else:
+        pass
+
 
 def p_result_definite_integral(p):
     '''expression : INTEGRAL FROM expression TO expression OF expression
@@ -203,12 +233,26 @@ def p_result_definite_integral(p):
     lowerbound = str(p[3])
     highbound = str(p[5])
     eq1 = str(p[7])
+    if s.find('^') != -1:
+        eq = MathFunctions.formateq(eq1)
+    else:
+        eq = str(eq1)
+    if lowerbound is not None and highbound is not None and p[7] is not None:
+        eq = (str(MathFunctions.integration(eq, (MathFunctions.symbols('x'), lowerbound, highbound))))
+        eq = MathFunctions.reformateq(eq)
+        p[0] = eq
+    else:
+        pass
 
 
 def p_expression_x(p):
-    '''expression : X
-                    | INT X'''
+    '''expression : X'''
     p[0] = str(p[1])
+
+
+def p_mult_expression(p):
+    '''expression : INT X'''
+    p[0] = str(p[1]) + '*' + str(p[2])
 
 
 def p_expression_trigonometry(p):
@@ -258,10 +302,18 @@ def p_matrix_List(p):
 
 def p_expression_sum(p):
     '''expression : SUM FROM expression TO expression OF expression'''
-    lower = p[3]
-    high = p[5]
-    eq = str(p[7])
-    print("Sumatoria")
+    lowerBound = p[3]
+    highBound = p[5]
+    eq1 = str(p[7])
+    if s.find('^') != -1:
+        eq = MathFunctions.formateq(eq1)
+    else:
+        eq = str(eq1)
+    if lowerBound is not None and highBound is not None and p[7] is not None:
+        p[0] = MathFunctions.summation(eq, lowerBound, highBound, MathFunctions.symbols('x'))
+    else:
+        pass
+
 
 
 def p_error(p):
