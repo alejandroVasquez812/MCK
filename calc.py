@@ -12,7 +12,10 @@ import ply.lex as lex
 import matrix
 import asciimathml
 import MathFunctions
+import sympy
+
 from xml.etree.ElementTree import tostring
+
 
 sys.path.insert(0, "../..")
 
@@ -26,7 +29,7 @@ reserved = {
     'integral': 'INTEGRAL',
     'from': 'FROM',
     'to': 'TO',
-    'derivation': 'DERIVATIVE',
+    'derivative': 'DERIVATIVE',
     'limit': 'LIMIT',
     'when': 'WHEN',
     'of': 'OF',
@@ -191,6 +194,7 @@ def p_expression_solve(p):
         eq = (str(MathFunctions.msolve(eq, MathFunctions.symbols('x'))))
         eq = MathFunctions.reformateq(eq)
         p[0] = eq
+
     else:
         pass
 
@@ -205,6 +209,11 @@ def p_expression_derivative(p):
         eq = (str(MathFunctions.derivative(eq, MathFunctions.symbols('x'))))
         eq = MathFunctions.reformateq(eq)
         p[0] = eq
+        w = tostring(asciimathml.parse('frac{d}{dx}'))
+        y = tostring(asciimathml.parse(str(p[3])))
+        x = tostring(asciimathml.parse(str(p[0])))
+        print(str(w, "utf-8") + str(y, "utf-8") + "=" + str(x, "utf-8"))
+
     else:
         pass
 
@@ -225,6 +234,9 @@ def p_expression_limit(p):
         eq = (str(MathFunctions.limits(eq, MathFunctions.symbols('x'), tendsTo)))
         eq = MathFunctions.reformateq(eq)
         p[0] = eq
+        y = tostring(asciimathml.parse("lim_(" + str(limitOf) + "->" + str(tendsTo) + ")"))
+        x = tostring(asciimathml.parse(str(p[0])))
+        print(str(y, "utf-8") + "=" + str(x, "utf-8"))
     else:
         pass
 
@@ -238,9 +250,12 @@ def p_expression_integral(p):
         eq = (str(MathFunctions.integration(eq, MathFunctions.symbols('x'))))
         eq = MathFunctions.reformateq(eq)
         p[0] = eq
+
+        y = tostring(asciimathml.parse("int" + str(p[3])))
+        x = tostring(asciimathml.parse(str(p[0])))
+        print(str(y, "utf-8") + "=" + str(x, "utf-8"))
     else:
         pass
-
 
 def p_expression_definite_integral(p):
     '''expression : INTEGRAL FROM expression TO expression OF expression
@@ -256,6 +271,9 @@ def p_expression_definite_integral(p):
         eq = (str(MathFunctions.integration(eq, (MathFunctions.symbols('x'), lowerbound, highbound))))
         eq = MathFunctions.reformateq(eq)
         p[0] = eq
+        y = tostring(asciimathml.parse("int_"+lowerbound+"^"+highbound + " " + str(p[7])))
+        x = tostring(asciimathml.parse(str(p[0])))
+        print(str(y, "utf-8") + "=" + str(x, "utf-8"))
     else:
         pass
 
@@ -303,43 +321,40 @@ def p_expression_trigonometry(p):
                 | TAN '(' expression ')' '''
     p[0] = str(p[1]) + str(p[2]) + str(p[3]) + str(p[4])
     if p[1] == 'sin':
-       p[0]=("Answer: %s: "% math.sin(p[3]))
+       p[0]=(math.sin(p[3]))
     if p[1] == 'cos':
-       p[0] ("Answer: %s" % math.cos(p[3]))
+       p[0] (math.cos(p[3]))
     if p[1] == 'tan':
-       p[0]=("Answer: %s" % math.tan(p[3]))
+       p[0]=(math.tan(p[3]))
+    y = tostring(asciimathml.parse(str(p[1]) + str(p[3])))
+    x = tostring(asciimathml.parse(str(p[0])))
+    print(str(y, "utf-8") + "=" + str(x, "utf-8"))
 
 def p_Celsius_Fahrenheit_Float(p):	
-	'''	expression : INT VAR
+    '''	expression : INT VAR
 		           | FLOAT VAR 
 	'''
-	if p[2] == 'F':
-	     temp =( (p[1] -32) / 9.0 *5.0)
-	     p[0]=("%s Celsius", temp)
-	elif p[2] == 'C':
-	  temp = ( 9.0  / 5.0 *  p[1] + 32) 
-	  p[0]= ("%s Fahrenheit"% temp)
+    if p[2] == 'F':
+        temp =( (p[1] -32) / 9.0 *5.0)
+        p[0]=("%s ° C "% temp)
+    elif p[2] == 'C':
+        temp = ( 9.0  / 5.0 *  p[1] + 32)
+        p[0]= ("%s ° F "% temp)
+    y = tostring(asciimathml.parse(str(p[1]) + "° " + str(p[2])))
+    x = tostring(asciimathml.parse(str(p[0])))
+    print(str(y, "utf-8") + "=" + str(x, "utf-8") )
 # matrix 2x 2
+
+
 def p_matrix_List(p):
-	#creando la lista 
-    '''  expression : '[' INT ']' ',' '[' INT ']'
-    '''
-    #print(p[2])
-    #print(p[6])
-    sampleList = []
-    sampleList2= []
-    for digit_str in str(p[2]):
-     for digit in digit_str:
-      sampleList.append(digit)
-    #print(sampleList)  esto es para verificar la lista esta correcta  NO ES NECESARIO
-#la otra
-    for digit_st in str(p[6]):
-     for digits in digit_st:
-      sampleList2.append(digits)
-    #print(sampleList2)  esto es para verificar la lista esta correcta  NO ES NECESARIO
-    matrix1= matrix.Matrix([int(sampleList[0]),int(sampleList[1])],[int(sampleList2[0]),int(sampleList2[1])])
-    print(matrix1)
-    p[0]= (matrix1.det)
+   '''expression : '[' INT ',' INT ']' ',' '[' INT ',' INT ']'
+   '''
+   z = p[2]*p[10]-p[4]*p[8]
+   y = tostring(asciimathml.parse("[[" + str(p[2]) + "," + str(p[4]) + "],[" + str(p[8]) + "," + str(p[10]) + "]]"))
+   x = tostring(asciimathml.parse(str(z)))
+   p[0] = z
+   print(str(y, "utf-8") + "=" + str(x, "utf-8"))
+
 
 
 def p_expression_sum(p):
@@ -353,6 +368,10 @@ def p_expression_sum(p):
         eq = str(eq1)
     if lowerBound is not None and highBound is not None and p[7] is not None:
         p[0] = MathFunctions.summation(eq, lowerBound, highBound, MathFunctions.symbols('x'))
+        y = tostring(asciimathml.parse("sum_"+ str(lowerBound) +"^"+ str(highBound)+ " " + str(p[7])))
+        x = tostring(asciimathml.parse(str(p[0])))
+        print(str(y, "utf-8") + "=" + str(x, "utf-8"))
+
     else:
         pass
 
