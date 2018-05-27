@@ -31,7 +31,7 @@ You should receive the version in the next line.
 ```bash
 python calc.py
 ```
-3. This will allow you to start writing code in the MCK Language.
+2. This will allow you to start writing code in the MCK Language.
 
 Example code to write (the words inside the quotations are to be replaced for information of your choice ex. ID would be the name of a variable you have created):
 
@@ -44,3 +44,8 @@ c) Calculate Limit "TYPE" limit when x -> 5 of x.
 d)Calculate Derivate "TYPE" Derivate of x.
 
 e) Find the Sum "TYPE" SUM from 0 to 5 of x.
+
+3. The results  will in the form of MathML as a link:  
+  -copy the link
+  -make a file html and paste the link 
+  - then open it in webrowser
