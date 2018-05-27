@@ -48,4 +48,4 @@ e) Find the Sum "TYPE" SUM from 0 to 5 of x.
 3. The results  will in the form of MathML as a link:  
   -copy the link
   -make a file html and paste the link 
-  -then open it in webrowser
+  -then open it in web browser
