@@ -1,4 +1,4 @@
-##Introduction
+## Introduction
 
 Making calculations in a web page has never been an easy task for anyone. Many times, programmers have to find outside help, such as hiring mathematicians and designers to assist in properly developing, implementing, and analyzing a program or algorithm. One popular example of this is Wolfram Alpha. Occasionally, when a person is in need of such a program, they resort to finding and utilizing different websites to get the results they need. This requires the user to get familiar with a potentially overwhelming amount of different software. Therefore, they might decide to make accounts and pay for services like the aforementioned Wolfram Alpha. Additionally, sometimes these very programs are slow and unresponsive, and often scale suboptimally on different screens. These factors can cause the user to have an unpleasant and needlessly complicated experience. This is where MathML with Master King Calculations comes in. 
  
