@@ -6,6 +6,7 @@ MathML is an application of XML for describing mathematical notations and captur
  
 Using the Master King Calculations, generating MathML is fast, easy and maintainable in all devices . This is utilizing the concept of object oriented and  penmanship capabilities from high level essential,  and concurrency with the languages. Master King Calculations uses these same concepts of Math, on generating both simple and complex mathematical equations by simply calling functions. Its purpose is to become an easy to learn programming language for students in school and job works. This is made to save time and for the programmer’s convenience when it comes to adding new functions and customizing new commands in the webpages.
 
+[![Alt text](https://img.youtube.com/vi/VYOjWnS4cMY/0.jpg)](https://www.youtube.com/watch?v=VYOjWnS4cMY)
 
 ### Markdown
 
