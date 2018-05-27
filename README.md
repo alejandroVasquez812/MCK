@@ -18,7 +18,7 @@ For this project you will need to have the JDK installed and in your path. You c
 
 To verify if java is installed and in your system path open a terminal and type
 ```bash
-$ java -version
+$ python --version
 ```
 You should receive the version in the next line.
 
