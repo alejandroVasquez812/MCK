@@ -13,8 +13,8 @@ Using the Master King Calculations, generating MathML is fast, easy and maintain
 
 
 
-### Java
-For this project you will need to have the JDK installed and in your path. You can find the JDK [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html )
+### Python 3.6.5
+For this project you will need to have the JDK installed and in your path. You can find it  [here](https://www.python.org/downloads/ )
 
 To verify if java is installed and in your system path open a terminal and type
 ```bash
