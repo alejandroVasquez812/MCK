@@ -14,8 +14,10 @@ Using the Master King Calculations, generating MathML is fast, easy and maintain
 
 
 ### Python 3.6.5
-For this project you will need to have the JDK installed and in your path. You can find it  [here](https://www.python.org/downloads/ )
+For this project you will need to have the python installed and in your path. You can find it  [here](https://www.python.org/downloads/ )
 
+ Download pycharm to run the code.
+ 
 To verify if java is installed and in your system path open a terminal and type
 ```bash
 $ python --version
@@ -27,7 +29,7 @@ You should receive the version in the next line.
 
 
 ### Instructions to run the language:
-1. Run a terminal inside the folder where the parser,lexer and intermidiate code reside.
+1. Run the code in pycharm  inside the folder where the parser,lexer and intermidiate code reside.
 ```bash
 python calc.py
 ```
